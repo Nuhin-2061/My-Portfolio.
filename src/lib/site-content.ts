@@ -19,6 +19,7 @@ export const aboutParagraphs = [
 export const stats = [
   { value: "CSE", label: "Undergraduate" },
   { value: "BUP", label: "University" },
+  { value: "Problem Solving", label: "Core skill" },
   { value: "Cloud", label: "Future specialization" },
   { value: "Team-first", label: "Leadership style" }
 ];
