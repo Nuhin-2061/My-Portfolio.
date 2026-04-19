@@ -69,13 +69,14 @@ export const skills = [
 
 export const projects = [
   {
-    name: "Java Plane Game",
+    name: "Plane Game",
     description:
       "A game development project built in Java that combines animation, interaction, and responsive gameplay logic.",
     purpose:
       "To strengthen object-oriented thinking, event handling, and hands-on Java programming through a fun, interactive build.",
     impact:
-      "Demonstrated how core programming concepts can be translated into an engaging user experience while improving control-flow and debugging skills."
+      "Demonstrated how core programming concepts can be translated into an engaging user experience while improving control-flow and debugging skills.",
+    githubUrl: "https://github.com/Nuhin-2061/Plane_Game."
   },
   {
     name: "Agriculture Management System",
@@ -84,7 +85,8 @@ export const projects = [
     purpose:
       "To explore how software can support practical workflows and solve domain-specific management challenges.",
     impact:
-      "Showed an ability to think beyond theory and design a system that can improve efficiency, clarity, and decision-making."
+      "Showed an ability to think beyond theory and design a system that can improve efficiency, clarity, and decision-making.",
+    githubUrl: "https://github.com/Nuhin-2061/Agriculture_Management_System."
   },
   {
     name: "Tourist Management System",
@@ -93,7 +95,18 @@ export const projects = [
     purpose:
       "To practice application design, user flow thinking, and data organization in a real-world style project.",
     impact:
-      "Highlighted a practical approach to building user-facing software that balances structure, usability, and clarity."
+      "Highlighted a practical approach to building user-facing software that balances structure, usability, and clarity.",
+    githubUrl: "https://github.com/Nuhin-2061/Tourist_Management_System."
+  },
+  {
+    name: "Hospital Management System",
+    description:
+      "A management platform focused on organizing hospital operations such as patient records, scheduling, and core administrative workflows.",
+    purpose:
+      "To apply software engineering principles in a real-world healthcare management context and improve operational structure.",
+    impact:
+      "Demonstrated practical system design for service-heavy environments, with focus on clarity, maintainability, and process efficiency.",
+    githubUrl: "https://github.com/Nuhin-2061/Hospital_Management_System."
   }
 ];
 
