@@ -24,6 +24,18 @@ export const stats = [
   { value: "Team-first", label: "Leadership style" }
 ];
 
+export const profile = {
+  field: "Undergraduate Student in Computer Science & Engineering",
+  university: "Bangladesh University of Professionals (BUP)",
+  currentRole: "Assistant Joint Secretary (Logistics), BUP Computer Programming Club"
+};
+
+export const snapshotPoints = [
+  "Focused on problem solving, software development, and continuous learning.",
+  "Interested in cloud computing and scalable modern systems.",
+  "Enjoys football, which reinforces discipline and teamwork."
+];
+
 export const skills = [
   {
     title: "Programming Languages",

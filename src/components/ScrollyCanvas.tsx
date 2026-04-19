@@ -18,8 +18,29 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
   const [frameIndex, setFrameIndex] = useState(0);
   const [loadProgress, setLoadProgress] = useState(0);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [isCompactScreen, setIsCompactScreen] = useState(false);
+  const [reduceMotion, setReduceMotion] = useState(false);
   const { scrollYProgress } = useScroll();
   const heroProgress = useTransform(scrollYProgress, [0, 0.35], [0, 1]);
+
+  useEffect(() => {
+    const mediaCompact = window.matchMedia("(max-width: 768px), (pointer: coarse)");
+    const mediaReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const syncPreferences = () => {
+      setIsCompactScreen(mediaCompact.matches);
+      setReduceMotion(mediaReducedMotion.matches);
+    };
+
+    syncPreferences();
+    mediaCompact.addEventListener("change", syncPreferences);
+    mediaReducedMotion.addEventListener("change", syncPreferences);
+
+    return () => {
+      mediaCompact.removeEventListener("change", syncPreferences);
+      mediaReducedMotion.removeEventListener("change", syncPreferences);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -31,7 +52,7 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
 
     let loadedCount = 0;
     const total = images.length;
-    const minimumToStart = Math.max(1, Math.min(total, 20));
+    const minimumToStart = Math.max(1, Math.min(total, isCompactScreen ? 10 : 20));
 
     const markLoaded = () => {
       loadedCount += 1;
@@ -64,10 +85,12 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
     return () => {
       cancelled = true;
     };
-  }, [frames]);
+  }, [frames, isCompactScreen]);
 
   useEffect(() => {
-    if (!loaded || frames.length === 0) {
+    const useSmoothedAnimation = !isCompactScreen && !reduceMotion;
+
+    if (!loaded || frames.length === 0 || !useSmoothedAnimation) {
       if (smoothingRafRef.current !== null) {
         cancelAnimationFrame(smoothingRafRef.current);
         smoothingRafRef.current = null;
@@ -92,7 +115,7 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
       }
       smoothingRafRef.current = null;
     };
-  }, [loaded, frames.length]);
+  }, [loaded, frames.length, isCompactScreen, reduceMotion]);
 
   useEffect(() => {
     const updateCanvasSize = () => {
@@ -127,6 +150,15 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const mappedFrame = latest * (frames.length - 1);
     const bounded = Math.min(frames.length - 1, Math.max(0, mappedFrame));
+
+    if (isCompactScreen || reduceMotion) {
+      const rounded = Math.round(bounded);
+      targetFrameRef.current = rounded;
+      currentFrameRef.current = rounded;
+      setFrameIndex((prev) => (prev === rounded ? prev : rounded));
+      return;
+    }
+
     targetFrameRef.current = bounded;
   });
 
@@ -168,7 +200,7 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
       return;
     }
 
-    const dpr = window.devicePixelRatio || 1;
+    const dpr = Math.min(window.devicePixelRatio || 1, isCompactScreen ? 1.5 : 2);
     canvas.width = Math.floor(canvasSize.width * dpr);
     canvas.height = Math.floor(canvasSize.height * dpr);
     canvas.style.width = `${canvasSize.width}px`;
@@ -184,7 +216,7 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
     const offsetY = (canvasSize.height - drawHeight) / 2;
 
     context.drawImage(image, offsetX, offsetY, drawWidth, drawHeight);
-  }, [canvasSize, frameIndex, loaded]);
+  }, [canvasSize, frameIndex, isCompactScreen, loaded]);
 
   return (
     <section className="pointer-events-none fixed inset-0 z-0 overflow-hidden">
@@ -194,17 +226,17 @@ export function ScrollyCanvas({ frames }: ScrollyCanvasProps) {
 
       <Overlay scrollYProgress={heroProgress} />
 
-      <div className="absolute inset-x-0 top-6 z-20 flex justify-between px-6 sm:px-10 lg:px-14">
+      <div className="absolute inset-x-0 top-6 z-20 flex items-start justify-between px-4 sm:px-10 lg:px-14">
         <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.35em] text-white/60 backdrop-blur-md">
-          Portfolio / Scrollytelling
+          Portfolio
         </div>
-        <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.35em] text-white/60 backdrop-blur-md">
+        <div className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-[11px] uppercase tracking-[0.35em] text-white/60 backdrop-blur-md sm:block">
           Top to Bottom Scroll Animation
         </div>
       </div>
 
       {!loaded && (
-        <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#121212] text-sm uppercase tracking-[0.45em] text-white/60">
+        <div className="absolute inset-0 z-30 flex items-center justify-center bg-[#121212] px-4 text-center text-xs uppercase tracking-[0.25em] text-white/60 sm:text-sm sm:tracking-[0.45em]">
           Loading sequence {loadProgress}%
         </div>
       )}
