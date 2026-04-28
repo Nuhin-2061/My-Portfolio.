@@ -128,6 +128,14 @@ export const goals = [
   "Grow through collaboration, mentorship, and networking"
 ];
 
+export const contact = {
+  eyebrow: "Send a message",
+  headline: "Build connections and collaborate with me.",
+  email: "asnmasum@gmail.com",
+  helper: "I read every message and respond as soon as possible.",
+  cta: "Send Message"
+};
+
 export const socialLinks = [
   {
     label: "LinkedIn",
